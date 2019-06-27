@@ -47,7 +47,7 @@ class SnackbarManager {
     private SnackbarRecord mCurrentSnackbar;
     private SnackbarRecord mNextSnackbar;
 
-    private SnackbarManager() {
+    SnackbarManager() {
         mLock = new Object();
         mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
             @Override

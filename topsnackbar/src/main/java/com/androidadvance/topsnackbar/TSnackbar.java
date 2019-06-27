@@ -44,7 +44,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 
-public final class TSnackbar {
+public class TSnackbar {
 
     public static abstract class Callback {
 
@@ -94,6 +94,8 @@ public final class TSnackbar {
     private static final Handler sHandler;
     private static final int MSG_SHOW = 0;
     private static final int MSG_DISMISS = 1;
+
+    private SnackbarManager snackbarManager;
 
     static {
         sHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
@@ -369,8 +371,8 @@ public final class TSnackbar {
     }
 
     public void show() {
-        SnackbarManager.getInstance()
-                .show(mDuration, mManagerCallback);
+        snackbarManager = new SnackbarManager();
+        snackbarManager.show(mDuration, mManagerCallback);
     }
 
     public void dismiss() {
@@ -378,7 +380,7 @@ public final class TSnackbar {
     }
 
     private void dispatchDismiss(@Callback.DismissEvent int event) {
-        SnackbarManager.getInstance()
+        snackbarManager
                 .dismiss(mManagerCallback, event);
     }
 
@@ -389,12 +391,12 @@ public final class TSnackbar {
     }
 
     public boolean isShown() {
-        return SnackbarManager.getInstance()
+        return snackbarManager
                 .isCurrent(mManagerCallback);
     }
 
     public boolean isShownOrQueued() {
-        return SnackbarManager.getInstance()
+        return snackbarManager
                 .isCurrentOrNext(mManagerCallback);
     }
 
@@ -431,12 +433,12 @@ public final class TSnackbar {
                             case SwipeDismissBehavior.STATE_DRAGGING:
                             case SwipeDismissBehavior.STATE_SETTLING:
 
-                                SnackbarManager.getInstance()
+                                snackbarManager
                                         .cancelTimeout(mManagerCallback);
                                 break;
                             case SwipeDismissBehavior.STATE_IDLE:
 
-                                SnackbarManager.getInstance()
+                                snackbarManager
                                         .restoreTimeout(mManagerCallback);
                                 break;
                         }
@@ -497,7 +499,7 @@ public final class TSnackbar {
                             if (mCallback != null) {
                                 mCallback.onShown(TSnackbar.this);
                             }
-                            SnackbarManager.getInstance()
+                            snackbarManager
                                     .onShown(mManagerCallback);
                         }
                     })
@@ -513,7 +515,7 @@ public final class TSnackbar {
                     if (mCallback != null) {
                         mCallback.onShown(TSnackbar.this);
                     }
-                    SnackbarManager.getInstance()
+                    snackbarManager
                             .onShown(mManagerCallback);
                 }
 
@@ -579,7 +581,7 @@ public final class TSnackbar {
 
     private void onViewHidden(int event) {
 
-        SnackbarManager.getInstance()
+        snackbarManager
                 .onDismissed(mManagerCallback);
 
         if (mCallback != null) {
@@ -812,12 +814,12 @@ public final class TSnackbar {
             if (parent.isPointInChildBounds(child, (int) event.getX(), (int) event.getY())) {
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
-                        SnackbarManager.getInstance()
+                        snackbarManager
                                 .cancelTimeout(mManagerCallback);
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        SnackbarManager.getInstance()
+                        snackbarManager
                                 .restoreTimeout(mManagerCallback);
                         break;
                 }
